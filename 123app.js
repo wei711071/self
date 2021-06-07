@@ -166,9 +166,8 @@ function nav(path) {
             <button class="mdui-textfield-icon mdui-btn mdui-btn-icon" onclick="if($('#search_bar').hasClass('mdui-textfield-expanded') && $('#search_bar_form>input').val()) $('#search_bar_form').submit();">
                 <i class="mdui-icon material-icons">search</i>
             </button>
-            <a href="https://ani.rip/discord" target="_blank" class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-tooltip="{content: 'Discord'}">
         </div>`
-
+        <a href="https://ani.rip/discord" target="_blank" class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-tooltip="{content: 'Discord'}">
     // // 個人盤 或 團隊盤
     // if (model.root_type < 2) {
     //     // 顯示搜索框
