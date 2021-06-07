@@ -503,7 +503,7 @@ function render_search_result_list() {
     <div class="mdui-row">
     <ul id="list" class="mdui-list">
     </ul>
-    <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">共 <span class="number"></span> 項<br>群主Discord：秋人#2989<br><a id="back-to-top" href="#">返回頂部</a></div>
+    <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">共 <span class="number"></span> 項<br>Discord：NekoChan#2851<br><a id="back-to-top" href="#">返回頂部</a></div>
     </div>
     <div id="readme_md" class="mdui-typo" style="display:none; padding: 20px 0;"></div>`
     $('#content').html(content)
