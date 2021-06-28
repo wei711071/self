@@ -283,7 +283,7 @@ function file_code(path){
 <pre id="editor" ></pre>
 </div>
 <div class="mdui-textfield">
-	<label class="mdui-textfield-label">Download link</label>
+	<label class="mdui-textfield-label">下載連結(IDM可用)</label>
 	<input class="mdui-textfield-input" type="text" value="${href}" readonly/>
 </div>
 
@@ -329,14 +329,14 @@ function file_video(path){
         var applelink = url.replace(/(^\w+:|^)\/\//, '');
         playBtn = `<a class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" href="infuse://${applelink}">Play in Infuse</a>`;
     }
-    playBtn += `<br><a style="margin-top: 15px" href="${encoded_url}" target="_blank" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent download-btn">Direct Download</a>`;
-    playBtn += `<br><button style="margin-top: 15px" class="btn mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent copy-btn" data-clipboard-text="${encoded_url}">Copy Download Link to Clipboard</button>`;
+    playBtn += `<br><a style="margin-top: 15px" href="${encoded_url}" target="_blank" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent download-btn">直連下載</a>`;
+    playBtn += `<br><button style="margin-top: 15px" class="btn mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent copy-btn" data-clipboard-text="${encoded_url}">複製連結到剪貼版</button>`;
 	var content = `
 <div class="mdui-container-fluid">
 	<br>${playBtn}
 	<!-Fixed label->
 	<div class="mdui-textfield">
-	  <label class="mdui-textfield-label">download link</label>
+	  <label class="mdui-textfield-label">下載連結(IDM可用)</label>
 	  <input class="mdui-textfield-input" type="text" value="${url}" readonly/>
 	</div>
 </div>
