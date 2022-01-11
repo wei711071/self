@@ -5687,6 +5687,7 @@ function nav(path) {
         </div>
         <button class="mdui-textfield-icon mdui-btn mdui-btn-icon dummyclass2" onclick="window.open('${UI.helpURL}','_blank')">
           <i class="mdui-icon material-icons">comment</i>
+	  <i class=<ion-icon name="logo-discord"></ion-icon></i>
         </button>`;
   html += search_bar;
   
