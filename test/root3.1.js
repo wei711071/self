@@ -204,13 +204,13 @@ function list_files(path,files){
                 </a>
                 <div class="mdui-col-sm-1 mdui-text-right"></div>
             </li>`;
-        }else{
+      }else{
        switch(item.name) { // 隱藏項目
 				case 'README.md':
 					continue
 				case 'HEAD.md':
 					continue
-			}
+		}
             var p = path+item.name;
             var c = "file";
             if(item.name == "README.md"){
