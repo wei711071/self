@@ -1,0 +1,361 @@
+// load in head necessary static
+document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mdui@1.0.1/dist/css/mdui.min.css" integrity="sha384-cLRrMq39HOZdvE0j6yBojO4+1PrHfB7a9l5qLcmRm/fiWXYY+CndJPmyu5FV/9Tw" crossorigin="anonymous"/>');
+document.write('<script src="//cdn.jsdelivr.net/npm/mdui@1.0.1/dist/js/mdui.min.js" integrity="sha384-gCMZcshYKOGRX9r6wbDrvF+TcCCswSHFucUzUPwka+Gr+uHgjlYvkABr95TCOz3A" crossorigin="anonymous"></script>')
+// markdown support
+document.write('<script src="//cdn.jsdelivr.net/npm/markdown-it@10.0.0/dist/markdown-it.min.js"></script>');
+//copy support
+document.write('<script src="//cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>');
+document.write('<style>.mdui-appbar .mdui-toolbar{height:56px;font-size:1pc}.mdui-toolbar>*{padding:0 6px;margin:0 2px}.mdui-toolbar>i{opacity:.5}.mdui-toolbar>.mdui-typo-headline{padding:0 1pc 0 0}.mdui-toolbar>i{padding:0}.mdui-toolbar>a:hover,a.active,a.mdui-typo-headline{opacity:1}.mdui-container{max-width:980px}.mdui-list-item{transition:none}.mdui-list>.th{background-color:initial}.mdui-list-item>a{width:100%;line-height:3pc}.mdui-list-item{margin:2px 0;padding:0}.mdui-toolbar>a:last-child{opacity:1}@media screen and (max-width:980px){.mdui-list-item .mdui-text-right{display:none}.mdui-container{width:100%!important;margin:0}.mdui-toolbar>.mdui-typo-headline,.mdui-toolbar>a:last-child,.mdui-toolbar>i:first-child{display:block}}.mdui-textfield-close{position:absolute;top:17px;right:0;}.mdui-textfield-close>.mdui-icon{bottom:0;padding:0;}</style>');
+if(dark){document.write('<style>* {box-sizing: border-box}body{color:rgba(255,255,255,.87);background-color:#333232}.mdui-theme-primary-'+main_color+' .mdui-color-theme{background-color:#232427!important} .mdui-textfield-input{color:rgb(255, 255, 255)!important} .mdui-textfield-label{color:rgba(255, 255, 255, 0.7)!important}</style>');}
+// Initialize the page and load the necessary resources
+var obj_list = {};
+var searchval = '';
+var currentpath = '';
+function init(){
+    document.siteName = $('title').html();
+    $('body').addClass("mdui-theme-primary-"+main_color+" mdui-theme-accent-"+accent_color);
+    var html = "";
+    html += `
+    <header class="mdui-appbar mdui-color-theme">`
+    if(dark){
+        html += `
+        <div id="nav" class="mdui-toolbar mdui-container mdui-text-color-white-text">
+        </div>`;
+    }else{
+        html += `
+        <div id="nav" class="mdui-toolbar mdui-container">
+        </div>`;
+    }
+html += `
+    </header>
+        <div id="content" class="mdui-container"> 
+        </div>`;
+    $('body').html(html);
+}
+
+function render(path){
+	if(path.indexOf("?") > 0){
+		path = path.substr(0,path.indexOf("?"));
+	}
+    title(path);
+    nav(path);
+    if(path.substr(-1) == '/'){
+    	list(path);
+        if(searchval != '') {
+            $('#searchInput').val(searchval);
+            searchOnlyActiveDir();
+        }
+    }else{
+	    file(path);
+    }
+    $(window).scrollTop(0);
+    $("input[type='text']").on("click", function () {
+        $(this).select();
+    });
+    $(".windows-btn").on("click", function () {
+        window.location = $(this).data("href");
+        return false;
+    });
+    $(".mac-btn").on("click", function () {
+        window.location = $(this).data("href");
+        return false;
+    });
+    $(".android-btn").on("click", function () {
+        window.location = $(this).data("href");
+        return false;
+    });
+    $(".mdui-textfield-close").on("click", function () {
+        let _input = $("#searchInput");
+        if(_input.val() != '') {
+            _input.val('').focus();
+            searchval = '';
+            searchOnlyActiveDir();
+        }
+        return false;
+    });
+    currentpath = path;
+}
+
+// Title
+function title(path){
+    path = decodeURI(path);
+    $('title').html(document.siteName+' - '+path);
+}
+
+// Nav
+function nav(path) {
+	var html = "";
+	html += `<a href="/" class="mdui-typo-headline folder">${document.siteName}</a>`;
+	var arr = path.trim('/').split('/');
+	var p = '/';
+	if (arr.length > 0) {
+		for (i in arr) {
+			var n = arr[i];
+			n = decodeURI(n);
+            var ext = n.split('.').pop();
+            if("|html|php|css|go|java|js|json|txt|sh|md|mp4|webm|avi|bmp|jpg|jpeg|png|gif|flac|m4a|mp3|wav|ogg|mpg|mpeg|mkv|m2ts|rm|rmvb|mov|wmv|asf|ts|flv|".indexOf(`|${ext}|`) >= 0){
+	            p += n + "?a=view";
+            }else {
+                p += n + '/';
+            }
+            if (n == '') {
+                break;
+            }
+            html += `<i class="mdui-icon material-icons mdui-icon-dark folder" style="margin:0;">chevron_right</i><a class="folder" href="${p}">${n}</a>`;
+        }
+    }
+    html += `<div class="mdui-toolbar-spacer"></div>
+    <a href="https://discord.com/invite/XrAa7RDBhw" target="_blank" class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-tooltip="{content: 'Discord'}">
+<svg width="100%" height="100%" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0)">
+        <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="#ffffff"/>
+        </g>
+        <defs>
+        <clipPath id="clip0">
+        <rect width="71" height="55" fill="white"/>
+        </clipPath>
+        </defs>
+    </svg>
+    </a>
+    <a href="https://core.newebpay.com/EPG/ownself/x8Xrv1" target="_blank" class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-tooltip="{content: 'Donate 請我一杯飲料~'}" alt="Donate 請我一杯飲料">
+      <svg id="_x33_0" enable-background="new 0 0 64 64" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" style="width:24px; height:24px; transform: translate(0px,12px);" viewBox="0 0 64 64"><g><g><g><path d="m60 18c0 15-12 21-12 21v-14s-4-2-4-7h4v-5h-32v5h4c0 5-4 7-4 7v9 5s-12-6-12-21 12-16 16-16 10 2 12 6c2-4 8-6 12-6s16 1 16 16z" fill="#ff826e"></path></g><g><path d="m48 13v5h-4-24-4v-5z" fill="#b4dd7f"></path></g><g><path d="m16 25h9c-4.97 0-9 4.03-9 9z" fill="#e6e9ed"></path></g><g><path d="m16 25s4-2 4-7h24c0 5 4 7 4 7h-23z" fill="#e6e9ed"></path></g><g><path d="m16 34c0 4.97 4.03 9 9 9-1.91 0-3.64.76-4.9 2.01-.03-.01-.07-.01-.1-.01h-4v-6z" fill="#e6e9ed"></path></g><g><path d="m48 39v6h-.05c-.51-4.51-4.32-8-8.95-8s-8.44 3.5-8.94 7.99l-.09.08c-1.27-1.28-3.03-2.07-4.97-2.07 4.97 0 9-4.03 9-9s-4.03-9-9-9h23z" fill="#e6e9ed"></path></g><g><path d="m48 58v4h-9c2.79 0 5.2-1.64 6.33-4z" fill="#e6e9ed"></path></g><g><path d="m32 55c0 3.87 3.13 7 7 7h-15c3.87 0 7-3.13 7-7v-1.4c.39-.65.68-1.37.84-2.14h.01c.22.29.46.57.72.83l-.04.04c-.34.83-.53 1.73-.53 2.67z" fill="#e6e9ed"></path></g><g><path d="m24 62h-8v-4h1.67c1.13 2.36 3.54 4 6.33 4z" fill="#e6e9ed"></path></g><g><path d="m39 58h6.33c-1.13 2.36-3.54 4-6.33 4-3.87 0-7-3.13-7-7 0-.94.19-1.84.53-2.67l.04-.04c1.19 1.22 2.71 2.1 4.43 2.48v1.23c0 1.2.8 2 2 2z" fill="#ffc729"></path></g><g><path d="m32 50c0 .5-.05.99-.16 1.46-.16.77-.45 1.49-.84 2.14-.89 1.48-2.31 2.61-4 3.11l-.1-.03c.07-.2.1-.43.1-.68v-5c0-1.2-.8-2-2-2h-3v-1-1c0-.97-.94-1.93-1.9-1.99 1.26-1.25 2.99-2.01 4.9-2.01 1.94 0 3.7.79 4.97 2.07 1.26 1.26 2.03 3 2.03 4.93z" fill="#ffc729"></path></g><g><path d="m31 53.6v1.4c0 3.87-3.13 7-7 7-2.79 0-5.2-1.64-6.33-4h7.33c.95 0 1.65-.51 1.9-1.32l.1.03c1.69-.5 3.11-1.63 4-3.11z" fill="#fcd770"></path></g><g><path d="m44 45c-1 0-2 1-2 2v1 1h-3c-1.2 0-2 .8-2 2v3.77c-1.72-.38-3.24-1.26-4.43-2.48-.26-.26-.5-.54-.72-.83h-.01c.11-.47.16-.96.16-1.46 0-1.93-.77-3.67-2.03-4.93l.09-.08c.5-4.49 4.31-7.99 8.94-7.99s8.44 3.49 8.95 8z" fill="#fcd770"></path></g><g><circle cx="25" cy="34" fill="#fcd770" r="9"></circle></g><g><path d="m62 45v14l-11-3v-8z" fill="#75b1f2"></path></g><g><path d="m13 48v8l-11 3v-14z" fill="#b4dd7f"></path></g><g><path d="m48 45 3 3v8l-3 2h-2.67-6.33c-1.2 0-2-.8-2-2v-1.23-3.77c0-1.2.8-2 2-2h3v-1-1c0-1 1-2 2-2h3.95z" fill="#f0d0b4"></path></g><g><path d="m22 48v1h3c1.2 0 2 .8 2 2v5c0 .25-.03.48-.1.68-.25.81-.95 1.32-1.9 1.32h-7.33-1.67l-3-2v-8l3-3h4c.03 0 .07 0 .1.01.96.06 1.9 1.02 1.9 1.99z" fill="#f0d0b4"></path></g></g><g><path d="m63 60.309v-16.618l-11.703 3.192-2.297-2.297v-5.004c2.422-1.447 12-8.026 12-21.582 0-15.343-11.889-17-17-17-4.121 0-9.367 1.794-12 5.149-2.633-3.355-7.879-5.149-12-5.149-5.111 0-17 1.657-17 17 0 13.556 9.578 20.135 12 21.582v5.004l-2.297 2.297-11.703-3.192v16.618l11.824-3.225 2.176 1.451v4.465h34v-4.465l2.176-1.451zm-24-3.309c-.645 0-1-.355-1-1v-5c0-.645.355-1 1-1h3 4v-2h-3v-1c0-.449.551-1 1-1h3.586l2.414 2.414v7.051l-2.303 1.535zm-6-2c0-.321.034-.635.083-.946.883.65 1.867 1.155 2.917 1.485v.461c0 1.738 1.262 3 3 3h4.467c-1.124 1.248-2.746 2-4.467 2-3.309 0-6-2.691-6-6zm-9 6c-1.721 0-3.344-.752-4.467-2h5.467c1.157 0 2.092-.566 2.596-1.453.824-.284 1.578-.694 2.249-1.212-.609 2.668-2.996 4.665-5.845 4.665zm-10-12.586 2.414-2.414h3.586c.449 0 1 .551 1 1v1h-3v2h7c.645 0 1 .355 1 1v5c0 .645-.355 1-1 1h-8.697l-2.303-1.535zm3-31.414v-3h30v3zm26.055 2c.225 2.254 1.18 3.891 2.157 5h-26.423c.977-1.109 1.932-2.746 2.157-5zm-1.199 26h-4.856v-1h6v-2h-3v-2h-2v2h-3v5h6v1h-2-4v2h1.166c-.101.311-.166.642-.166 1v2.417c-1.193-.483-2.255-1.257-3.097-2.249.058-.384.097-.773.097-1.168 0-1.971-.72-3.775-1.907-5.171.573-3.911 3.92-6.829 7.907-6.829 3.703 0 6.848 2.513 7.74 6h-2.74c-.804 0-1.58.401-2.144 1zm-16.856 3h-2v-1c0-.819-.417-1.607-1.034-2.172.91-.536 1.947-.828 3.034-.828 3.309 0 6 2.691 6 6 0 2.156-1.19 4.115-3 5.173v-4.173c0-1.738-1.262-3-3-3zm0-22c4.411 0 8 3.589 8 8s-3.589 8-8 8-8-3.589-8-8 3.589-8 8-8zm4.374 17.31c-.099-.065-.202-.124-.304-.185.141-.063.278-.131.415-.2-.04.127-.075.256-.111.385zm9.626-7.31c-1.606 0-3.13.38-4.482 1.057.31-.964.482-1.991.482-3.057 0-3.273-1.588-6.175-4.025-8h16.025v13.998c-1.832-2.44-4.743-3.998-8-3.998zm-22-10h2.025c-.768.575-1.45 1.257-2.025 2.025zm3.924 17.123c-.425.253-.828.545-1.204.877h-2.72v-4.025c1.015 1.356 2.361 2.447 3.924 3.148zm31.076 5.641 9-2.455v11.382l-9-2.455zm-47-30.764c0-13.051 9.398-15 15-15 4.031 0 9.423 2.083 11.105 5.447l.895 1.789.895-1.789c1.682-3.364 7.074-5.447 11.105-5.447 5.602 0 15 1.949 15 15 0 11.248-6.911 17.153-10 19.232v-12.85l-.553-.276c-.032-.016-2.907-1.506-3.376-5.106h3.929v-7h-34v7h3.93c-.459 3.559-3.251 5.041-3.377 5.105l-.553.277v12.85c-3.089-2.079-10-7.984-10-19.232zm7 37.236-9 2.455v-11.382l9 2.455zm5 5.764v-2h.094c.441.757.989 1.434 1.635 2zm12.274 0c.99-.872 1.761-1.982 2.226-3.243.465 1.261 1.236 2.371 2.226 3.243zm14.997 0c.646-.566 1.194-1.243 1.635-2h1.094v2z"></path><path d="m24 40h2v-2h3v-5h-6v-1h6v-2h-3v-2h-2v2h-3v5h6v1h-6v2h3z"></path></g></g></svg>
+    </a>`;
+	$('#nav').html(html);
+}
+
+// List files
+function list(path){
+    var content = "";
+    content += `
+    <div id="head_md" class="mdui-typo" style="display:none;padding: 20px 0;"></div>`;
+    if(search){
+        if(dark){
+            content += `<div class="mdui-textfield"><input class="mdui-textfield-input mdui-text-color-white-text" id="searchInput" onkeyup="searchOnlyActiveDir()" type="text" placeholder="Type to search.." autocomplete="off"></input><button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button></div>`;
+        }else{
+            content += `<div class="mdui-textfield"><input class="mdui-textfield-input" id="searchInput" onkeyup="searchOnlyActiveDir()" type="text" placeholder="我想搜尋..."></input></div>`;
+        }
+    }
+    content += `<div class="mdui-row"> 
+      <ul class="mdui-list"> 
+       <li class="mdui-list-item th"> 
+        <div class="mdui-col-xs-12 mdui-col-sm-7">
+        名稱
+    <i class="mdui-icon material-icons icon-sort" data-sort="name" data-order="more">expand_more</i>
+        </div> 
+        <div class="mdui-col-sm-3 mdui-text-right">
+        修改時間
+    <i class="mdui-icon material-icons icon-sort" data-sort="date" data-order="downward">expand_more</i>
+        </div> 
+        <div class="mdui-col-sm-2 mdui-text-right">
+         檔案大小
+    <i class="mdui-icon material-icons icon-sort" data-sort="size" data-order="downward">expand_more</i>
+        </div> 
+        <div class="mdui-col-sm-1 mdui-text-right">
+         下載
+        </div> 
+        </li> 
+      </ul> 
+     </div> 
+     <div class="mdui-row"> 
+      <ul id="list" class="mdui-list"> 
+      </ul> 
+     </div>
+     <div id="readme_md" class="mdui-typo" style="display:none; padding: 20px 0;"></div>
+    `;
+    $('#content').html(content);
+    $('#list').html(`<div class="mdui-progress"><div class="mdui-progress-indeterminate"></div></div>`);
+    $('#readme_md').hide().html('');
+    $('#head_md').hide().html('');
+    path = decodeURI(path);
+    if(obj_list[path] == null) {
+        $.post(path, function(data,status){
+            obj_list[path] = jQuery.parseJSON(data);
+            if(typeof obj_list[path] != 'null'){
+                list_files(path,obj_list[path].files);
+            }
+        });
+    }else {
+        if(typeof obj_list[path] != 'null'){
+            list_files(path,obj_list[path].files);
+        }
+    }  
+}
+
+function list_files(path,files){
+    html = "";
+    for(i in files){
+        var item = files[i];
+        var p = path+item.name+'/';
+        if(item['size']==undefined){
+            item['size'] = "";
+        }
+        var modifiedTime = utc2Taiwan(item['modifiedTime']);
+        var size = formatFileSize(item['size']);
+        item.name = item.name.replace(/\//g, "／");
+        item.name = item.name.replace(/:/g, "：");
+        if(item['mimeType'] == 'application/vnd.google-apps.folder'){
+            html +=`<li class="mdui-list-item mdui-ripple"><a href="${p}" class="folder">
+                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate" style="max-width: 522px;">
+                <i class="mdui-icon material-icons">folder_open</i>
+                  ${item.name}
+                </div>
+                <div class="mdui-col-sm-3 mdui-text-right">${modifiedTime}</div>
+                <div class="mdui-col-sm-2 mdui-text-right">${size}</div>
+                </a>
+                <div class="mdui-col-sm-1 mdui-text-right"></div>
+            </li>`;
+        }else{
+       switch(item.name) { // 隱藏項目
+				case 'README.md':
+					continue
+				case 'HEAD.md':
+					continue
+			}
+            var p = path+item.name;
+            var c = "file";
+            if(item.name == "README.md"){
+                 get_file(p, item, function(data){
+                    markdown("#readme_md",data);
+                });
+            }
+            if(item.name == "HEAD.md"){
+                get_file(p, item, function(data){
+                    markdown("#head_md",data);
+                });
+            }
+		var download_url = encodeURI(window.location.origin + p);
+            var ext = p.split('.').pop();
+            if("|html|php|css|go|java|js|json|txt|sh|md|mp4|webm|avi|bmp|jpg|jpeg|png|gif|flac|m4a|mp3|wav|ogg|mpg|mpeg|mkv|m2ts|rm|rmvb|mov|wmv|asf|ts|flv|".indexOf(`|${ext}|`) >= 0){
+            }
+            html += `<li class="mdui-list-item file mdui-ripple" target="_blank"><a gd-type="${item.mimeType}" href="${p}" class="${c}">
+              <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate" style="max-width: 522px;">
+              <i class="mdui-icon material-icons">insert_drive_file</i>
+                ${item.name}
+              </div>
+              <div class="mdui-col-sm-3 mdui-text-right">${modifiedTime}</div>
+              <div class="mdui-col-sm-2 mdui-text-right">${size}</div>
+            </a>
+            <div class="mdui-col-sm-1 mdui-text-right">
+              <a target="_blank" href="${download_url}"><i class="mdui-icon material-icons">arrow_downward</i></a>
+            </div>
+          </li>`;
+        }
+    }
+    $('#list').html(html);
+}
+
+
+function get_file(path, file, callback){
+    var key = "file_path_"+path+file['modifiedTime'];
+    var data = localStorage.getItem(key);
+    if(data != undefined){
+        return callback(data);
+    }else{
+        $.get(path, function(d){
+            localStorage.setItem(key, d);
+            callback(d);
+        });
+    }
+}
+
+
+
+
+function searchOnlyActiveDir() {
+    var e, t, n, l;
+    searchval = document.getElementById("searchInput").value;
+    for (e = document.getElementById("searchInput").value.toUpperCase(), t = document.getElementById("list").getElementsByTagName("li"), l = 0; l < t.length; l++)((n = t[l].getElementsByTagName("a")[0]).getElementsByTagName("div")[0].textContent || n.innerText).toUpperCase().indexOf(e) > -1 ? t[l].style.display = "" : t[l].style.display = "none"
+}
+
+// time conversion
+function utc2Taiwan(utc_datetime) {
+    // change to normal time format year-month-day hour: minutes: seconds
+    var T_pos = utc_datetime.indexOf('T');
+    var Z_pos = utc_datetime.indexOf('Z');
+    var year_month_day = utc_datetime.substr(0, T_pos);
+    var hour_minute_second = utc_datetime.substr(T_pos + 1, Z_pos - T_pos - 1);
+    var new_datetime = year_month_day + " " + hour_minute_second;
+
+    // processing becomes a timestamp
+    timestamp = new Date(Date.parse(new_datetime));
+    timestamp = timestamp.getTime();
+    timestamp = timestamp / 1000;
+
+    // Add 7 hours, Jakarta time is eight more time zones than UTC time
+    var unixtimestamp = timestamp + 8 * 60 * 60;
+
+    // timestamp into time
+    var unixtimestamp = new Date(unixtimestamp * 1000);
+    var year = 1900 + unixtimestamp.getYear();
+    var month = "0" + (unixtimestamp.getMonth() + 1);
+    var date = "0" + unixtimestamp.getDate();
+    var hour = "0" + unixtimestamp.getHours();
+    var minute = "0" + unixtimestamp.getMinutes();
+    var second = "0" + unixtimestamp.getSeconds();
+    return year + "-" + month.substring(month.length - 2, month.length) + "-" + date.substring(date.length - 2, date.length) +
+        " " + hour.substring(hour.length - 2, hour.length) + ":" +
+        minute.substring(minute.length - 2, minute.length) + ":" +
+        second.substring(second.length - 2, second.length);
+}
+
+// bytes conversion to KB, MB, GB
+function formatFileSize(bytes) {
+    if (bytes>=1000000000) {bytes=(bytes/1000000000).toFixed(2)+' GB';}
+    else if (bytes>=1000000)    {bytes=(bytes/1000000).toFixed(2)+' MB';}
+    else if (bytes>=1000)       {bytes=(bytes/1000).toFixed(2)+' KB';}
+    else if (bytes>1)           {bytes=bytes+' bytes';}
+    else if (bytes==1)          {bytes=bytes+' byte';}
+    else                        {bytes='';}
+    return bytes;
+}
+
+String.prototype.trim = function (char) {
+    if (char) {
+        return this.replace(new RegExp('^\\'+char+'+|\\'+char+'+$', 'g'), '');
+    }
+    return this.replace(/^\s+|\s+$/g, '');
+};
+
+// README.md HEAD.md support
+function markdown(el, data){
+    if(window.md == undefined){
+        //$.getScript('https://cdn.jsdelivr.net/npm/markdown-it@10.0.0/dist/markdown-it.min.js',function(){
+        window.md = window.markdownit();
+        markdown(el, data);
+        //});
+    }else{
+        var html = md.render(data);
+        $(el).show().html(html);
+    }
+}
+
+// Listen for fallback events
+window.onpopstate = function(){
+    if(currentpath.substr(-1) == '/') searchval = '';
+    var path = window.location.pathname;
+    render(path);
+}
+
+$(function(){
+    init();
+    var path = window.location.pathname;
+    var cp = new ClipboardJS('.btn');
+    $("body").on("click",'.folder',function(){
+        path = decodeURI(window.location.pathname);
+        var url = $(this).attr('href');
+        if(url == '/' && path == url) searchval = '';
+        if((url != '/' && path == url) || (url.substr(-1) == '/' && path.substr(-1) == '/')) searchval = '';
+        history.pushState(null, null, url);
+        render(url);
+        return false;
+    });
+
+    $("body").on("click",'.view',function(){
+        var url = $(this).attr('href');
+        history.pushState(null, null, url);
+        render(url);
+        return false;
+    });
+    
+    render(path);
+});
